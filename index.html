@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Cún ♥ Meo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="icon" href="meoo.png" type="image/png">
+<style>
+  :root{
+    --pink-1:#fff0f5;
+    --pink-2:#ffd6e8;
+    --pink-3:#ff9ec7;
+    --pink-4:#ff6fa5;
+    --pink-deep:#e0417a;
+    --cream:#fffaf7;
+    --ink:#7a3350;
+  }
+  *{box-sizing:border-box;}
+  html,body{
+    margin:0; height:100%;
+    font-family:'Quicksand', -apple-system, sans-serif;
+    background:linear-gradient(160deg,var(--pink-1) 0%, var(--pink-2) 45%, #ffe0ee 100%);
+    color:var(--ink);
+    overflow-x:hidden;
+    padding-top:env(safe-area-inset-top,0px);
+    padding-bottom:env(safe-area-inset-bottom,0px);
+  }
+  canvas#hearts{ position:fixed; inset:0; width:100%; height:100%; pointer-events:none; z-index:1; }
+
+  .wrap{
+    position:relative; z-index:2;
+    min-height:100%;
+    display:flex; flex-direction:column; align-items:center;
+    padding:48px 20px 40px;
+    text-align:center;
+  }
+
+  .names{
+    font-family:'Baloo 2', cursive;
+    font-weight:800;
+    font-size:clamp(32px,8vw,58px);
+    color:var(--pink-deep);
+    text-shadow:0 2px 0 #fff, 0 6px 18px rgba(224,65,122,0.25);
+    letter-spacing:.5px;
+    display:flex; align-items:center; gap:14px; flex-wrap:wrap; justify-content:center;
+  }
+  .heart-beat{
+    display:inline-block; animation:beat 1.15s ease-in-out infinite;
+    font-size:0.75em;
+  }
+  @keyframes beat{
+    0%,100%{transform:scale(1);}
+    25%{transform:scale(1.22);}
+    40%{transform:scale(0.95);}
+    55%{transform:scale(1.15);}
+  }
+
+  .tagline{
+    margin-top:10px;
+    font-size:clamp(14px,3.6vw,18px);
+    color:#a85a7c;
+    font-weight:500;
+  }
+
+  .counter-card{
+    margin-top:38px;
+    background:rgba(255,255,255,0.65);
+    backdrop-filter:blur(6px);
+    border:1px solid rgba(255,255,255,0.9);
+    border-radius:28px;
+    padding:34px 28px 30px;
+    width:min(560px, 92vw);
+    box-shadow:0 20px 50px -20px rgba(224,65,122,0.35);
+  }
+
+  .big-number{
+    font-family:'Baloo 2', cursive;
+    font-weight:800;
+    font-size:clamp(56px,16vw,104px);
+    line-height:1;
+    color:var(--pink-4);
+    text-shadow:0 4px 0 #fff;
+  }
+  .big-label{
+    font-size:clamp(15px,4vw,20px);
+    font-weight:700;
+    color:var(--pink-deep);
+    margin-top:4px;
+  }
+
+  .breakdown{
+    margin-top:22px;
+    display:flex; justify-content:center; gap:14px; flex-wrap:wrap;
+  }
+  .chip{
+    background:var(--cream);
+    border-radius:16px;
+    padding:12px 16px;
+    min-width:76px;
+    box-shadow:0 6px 16px -8px rgba(224,65,122,0.35);
+  }
+  .chip b{
+    display:block; font-family:'Baloo 2',cursive; font-size:24px; color:var(--pink-deep);
+  }
+  .chip span{ font-size:12px; color:#b57690; font-weight:600; }
+
+  .today-time{
+    margin-top:20px;
+    font-size:14px;
+    color:#a85a7c;
+    font-weight:600;
+  }
+  .today-time b{ color:var(--pink-deep); font-family:'Baloo 2',cursive; font-size:16px; letter-spacing:1px;}
+
+  .since{
+    margin-top:16px;
+    font-size:13px;
+    color:#c98aa6;
+  }
+
+  /* ---------- STYLES CHO KHUNG KHOẢNG CÁCH NƠI YÊU XA ---------- */
+  .distance-card{
+    margin-top:32px;
+    background:rgba(255,255,255,0.65);
+    backdrop-filter:blur(6px);
+    border:1px solid rgba(255,255,255,0.9);
+    border-radius:28px;
+    padding:28px 24px;
+    width:min(560px, 92vw);
+    box-shadow:0 20px 50px -20px rgba(224,65,122,0.3);
+  }
+  .dist-title{
+    font-family:'Baloo 2',cursive; font-weight:800;
+    font-size:18px; color:var(--pink-deep);
+    margin-bottom:20px;
+  }
+  .route-container{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    position:relative;
+    padding:10px 5px;
+  }
+  .location-box{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    z-index:2;
+  }
+  .location-icon{
+    font-size:42px;
+    margin-bottom:4px;
+    filter:drop-shadow(0 4px 8px rgba(224,65,122,0.2));
+  }
+  .location-name{
+    font-weight:800;
+    font-size:15px;
+    color:var(--pink-deep);
+  }
+  .location-role{
+    font-size:12px;
+    color:#a85a7c;
+    font-weight:600;
+  }
+
+  /* ---------- ĐƯỜNG NỐI TÍNH HIỆU LIỀN NÉT CHẠY TỪ ĐẦU TỚI CUỐI ---------- */
+  .route-line-wrap{
+    flex:1;
+    position:relative;
+    margin:0 10px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+  }
+  .wave-svg{
+    width:100%;
+    height:42px;
+    overflow:visible;
+  }
+  .wave-bg{
+    fill:none;
+    stroke:rgba(255, 111, 165, 0.25);
+    stroke-width:2;
+    stroke-linecap:round;
+    stroke-linejoin:round;
+  }
+  .wave-path{
+    fill:none;
+    stroke:var(--pink-4);
+    stroke-width:3;
+    stroke-linecap:round;
+    stroke-linejoin:round;
+    stroke-dasharray: 400;
+    stroke-dashoffset: 400;
+    animation: drawHeartbeat 2.5s ease-in-out infinite;
+  }
+  @keyframes drawHeartbeat {
+    0% { stroke-dashoffset: 400; }
+    70%, 100% { stroke-dashoffset: 0; }
+  }
+
+  .floating-heart{
+    position:absolute;
+    top:-18px;
+    font-size:18px;
+    animation:floatTravel 2.5s ease-in-out infinite;
+  }
+  @keyframes floatTravel{
+    0%{ left:0%; transform:scale(0.8); opacity:0; }
+    10%{ opacity:1; }
+    70%{ left:90%; transform:scale(1.2); opacity:1; }
+    100%{ left:90%; opacity:0; }
+  }
+
+  .dist-val{
+    font-family:'Baloo 2',cursive;
+    font-size:22px;
+    font-weight:800;
+    color:var(--pink-4);
+    margin-top:10px;
+    background:#fff;
+    padding:4px 16px;
+    border-radius:999px;
+    box-shadow:0 4px 12px rgba(224,65,122,0.15);
+  }
+  .dist-quote{
+    margin-top:18px;
+    font-size:13.5px;
+    color:#94486a;
+    font-weight:600;
+    font-style:italic;
+    line-height:1.5;
+  }
+
+  .message{
+    margin-top:34px;
+    max-width:480px;
+    font-size:15px;
+    line-height:1.7;
+    color:#94486a;
+    font-weight:500;
+  }
+
+  .paw-row{
+    margin-top:26px;
+    display:flex; gap:10px; font-size:20px; opacity:.8;
+  }
+
+  footer{
+    margin-top:auto;
+    padding-top:36px;
+    font-size:12px;
+    color:#c98aa6;
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    .heart-beat, .floating-heart, .wave-path{ animation:none; }
+  }
+
+  /* ================= MÀN HÌNH MỞ ĐẦU LÃNG MẠN ================= */
+  #openGate{
+    position:fixed; inset:0; z-index:100;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    gap:26px;
+    background:radial-gradient(circle at 50% 30%, #fff5f9 0%, #ffe3ee 45%, #ffc9dd 100%);
+    transition:opacity 1s ease, visibility 1s ease;
+  }
+  #openGate.hide{
+    opacity:0; visibility:hidden; pointer-events:none;
+  }
+  .gate-title{
+    font-family:'Baloo 2',cursive; font-weight:800;
+    font-size:clamp(28px,7vw,42px);
+    color:var(--pink-deep);
+    text-shadow:0 2px 0 #fff, 0 6px 16px rgba(224,65,122,0.25);
+    display:flex; align-items:center; gap:10px;
+  }
+  .gate-hint{
+    font-size:clamp(13px,3.4vw,15px);
+    color:#b5638a;
+    font-weight:600;
+    animation:hintPulse 2.2s ease-in-out infinite;
+    text-align:center; padding:0 20px;
+  }
+  @keyframes hintPulse{
+    0%,100%{opacity:.55;} 50%{opacity:1;}
+  }
+
+  .envelope-wrap{
+    cursor:pointer;
+    perspective:900px;
+    animation:floatGate 3.2s ease-in-out infinite;
+  }
+  @keyframes floatGate{
+    0%,100%{ transform:translateY(0); }
+    50%{ transform:translateY(-10px); }
+  }
+  .envelope{
+    position:relative;
+    width:210px; height:146px;
+    background:linear-gradient(160deg,#ff9ec7,var(--pink-4));
+    border-radius:14px;
+    box-shadow:0 24px 46px -18px rgba(224,65,122,0.55), inset 0 0 0 1px rgba(255,255,255,0.35);
+    overflow:hidden;
+    transition:transform .5s ease;
+  }
+  .envelope-wrap:hover .envelope{ transform:scale(1.04); }
+  .envelope::after{
+    content:'';
+    position:absolute; inset:0; z-index:1;
+    background:
+      linear-gradient(205deg, transparent 49.3%, rgba(224,65,122,0.3) 50%, transparent 50.7%),
+      linear-gradient(155deg, transparent 49.3%, rgba(224,65,122,0.3) 50%, transparent 50.7%);
+  }
+  .envelope-flap{
+    position:absolute; top:0; left:0; width:0; height:0;
+    border-left:105px solid transparent;
+    border-right:105px solid transparent;
+    border-top:78px solid #ff6fa5;
+    transform-origin:top center;
+    transition:transform .8s cubic-bezier(.6,-0.28,.74,.05);
+    z-index:2;
+    filter:drop-shadow(0 4px 6px rgba(224,65,122,0.25));
+  }
+  .envelope-seal{
+    position:absolute; top:50%; left:50%;
+    width:30px; height:28px;
+    transform:translate(-50%,-58%);
+    filter:drop-shadow(0 6px 10px rgba(224,65,122,0.65));
+    z-index:3;
+    animation:sealBeat 1.4s ease-in-out infinite;
+  }
+  .envelope-seal svg{ width:100%; height:100%; display:block; }
+  @keyframes sealBeat{
+    0%,100%{ transform:translate(-50%,-58%) scale(1); }
+    50%{ transform:translate(-50%,-58%) scale(1.12); }
+  }
+  .envelope-shine{
+    position:absolute; inset:0; z-index:4;
+    background:linear-gradient(120deg, transparent 30%, rgba(255,255,255,0.45) 45%, transparent 60%);
+    background-size:250% 250%;
+    animation:shineMove 3.4s ease-in-out infinite;
+    pointer-events:none;
+  }
+  @keyframes shineMove{
+    0%{ background-position:120% 0%; }
+    100%{ background-position:-20% 100%; }
+  }
+
+  .envelope-wrap.opening{ animation:none; }
+  .envelope-wrap.opening .envelope-flap{
+    transform:rotateX(-178deg);
+  }
+  .envelope-wrap.opening .envelope-seal{
+    animation:none;
+    opacity:0;
+    transition:opacity .25s ease;
+  }
+  .envelope-wrap.opening .envelope{
+    animation:envelopePop .6s ease .35s forwards;
+  }
+  @keyframes envelopePop{
+    0%{ transform:scale(1); }
+    40%{ transform:scale(1.08); }
+    100%{ transform:scale(0.2); opacity:0; }
+  }
+  .envelope-wrap.opening .gate-burst-heart{
+    animation:burstUp 1s ease-out forwards;
+  }
+
+  .gate-burst-heart{
+    position:absolute; top:38%; left:50%;
+    font-size:20px;
+    opacity:0;
+    pointer-events:none;
+  }
+  @keyframes burstUp{
+    0%{ opacity:0; transform:translate(-50%,-50%) scale(.4) rotate(0deg); }
+    15%{ opacity:1; }
+    100%{ opacity:0; transform:translate(calc(-50% + var(--bx,0px)), calc(-50% + var(--by,-120px))) scale(1.1) rotate(var(--br,20deg)); }
+  }
+
+  .wrap{
+    opacity:0; transform:translateY(16px);
+    transition:opacity 1s ease .15s, transform 1s ease .15s;
+  }
+  .wrap.reveal{
+    opacity:1; transform:translateY(0);
+  }
+</style>
+</head>
+<body>
+<canvas id="hearts"></canvas>
+
+<!-- Thẻ Audio ẩn đọc file mp3 -->
+<audio id="bgMusic" loop playsinline preload="auto">
+  <source src="yeuem.mp3" type="audio/mpeg">
+</audio>
+
+<!-- ============ MÀN HÌNH MỞ ĐẦU LÃNG MẠN ============ -->
+<div id="openGate">
+  <div class="gate-title">Cún <span class="heart-beat">♥</span> Meo</div>
+  <div class="envelope-wrap" id="envelopeWrap">
+    <div class="envelope">
+      <div class="envelope-flap"></div>
+      <div class="envelope-seal">
+        <svg viewBox="0 0 32 29" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="sealGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#fff7fa"/>
+              <stop offset="100%" stop-color="#e0417a"/>
+            </linearGradient>
+          </defs>
+          <path d="M16 28.2C16 28.2 1 18.6 1 9.7C1 4.3 5.1 0.8 9.6 0.8C12.7 0.8 15.1 2.6 16 5C16.9 2.6 19.3 0.8 22.4 0.8C26.9 0.8 31 4.3 31 9.7C31 18.6 16 28.2 16 28.2Z" fill="url(#sealGrad)"/>
+        </svg>
+      </div>
+      <div class="envelope-shine"></div>
+    </div>
+    <span class="gate-burst-heart" style="--bx:-70px; --by:-130px; --br:-25deg;">💕</span>
+    <span class="gate-burst-heart" style="--bx:10px; --by:-150px; --br:8deg;">💖</span>
+    <span class="gate-burst-heart" style="--bx:80px; --by:-120px; --br:22deg;">💗</span>
+    <span class="gate-burst-heart" style="--bx:-30px; --by:-160px; --br:-10deg;">💞</span>
+    <span class="gate-burst-heart" style="--bx:45px; --by:-165px; --br:14deg;">💓</span>
+  </div>
+  <div class="gate-hint">chạm vào phong thư để mở khoảnh khắc của chúng mình 💌</div>
+</div>
+
+<div class="wrap">
+  <div class="names">Cún <span class="heart-beat">💗</span> Meo</div>
+  <div class="tagline">Tình yêu lớn không phải yêu nhiều người mà là yêu một người và suốt đời.</div>
+
+  <div class="counter-card">
+    <div class="big-number" id="dayCount">0</div>
+    <div class="big-label">ngày chúng ta bên nhau rồi đó 🐾</div>
+
+    <div class="breakdown">
+      <div class="chip"><b id="yrs">0</b><span>năm</span></div>
+      <div class="chip"><b id="mos">0</b><span>tháng</span></div>
+      <div class="chip"><b id="dys">0</b><span>ngày</span></div>
+    </div>
+
+    <div class="today-time">hôm nay thêm được <b id="clock">00:00:00</b></div>
+    <div class="since">Thế giới có thêm chúng ta từ ngày 04/03/2026 — mãi mãi không đổi thay 💍</div>
+  </div>
+
+  <!-- KHUNG KHOẢNG CÁCH YÊU XA VỚI NÉT SÓNG LIỀN TAY -->
+  <div class="distance-card">
+    <div class="dist-title">In a world full of temporary things, you are my forever.📍</div>
+    <div class="route-container">
+      <div class="location-box">
+        <span class="location-icon">🐶</span>
+        <span class="location-name">Ninh Bình</span>
+        <span class="location-role">(Cún)</span>
+      </div>
+
+      <div class="route-line-wrap">
+        <span class="floating-heart">💖</span>
+        <svg class="wave-svg" viewBox="0 0 200 40" preserveAspectRatio="none">
+          <path class="wave-bg" d="M 0 20 L 20 20 L 30 5 L 40 35 L 50 12 L 60 28 L 70 20 L 90 20 L 100 0 L 110 40 L 120 10 L 130 30 L 140 20 L 160 20 L 170 8 L 180 32 L 190 20 L 200 20" />
+          <path class="wave-path" d="M 0 20 L 20 20 L 30 5 L 40 35 L 50 12 L 60 28 L 70 20 L 90 20 L 100 0 L 110 40 L 120 10 L 130 30 L 140 20 L 160 20 L 170 8 L 180 32 L 190 20 L 200 20" />
+        </svg>
+        <div class="dist-val">~ 93 km</div>
+      </div>
+
+      <div class="location-box">
+        <span class="location-icon">🐱</span>
+        <span class="location-name">Hà Nội</span>
+        <span class="location-role">(Meo)</span>
+      </div>
+    </div>
+    <div class="dist-quote">"Khoảng cách về địa lý không thể ngăn được 2 trái tim muốn tiến gần lại nhau."</div>
+  </div>
+
+  <div class="message">Mùa hè năm 18 tuổi có tiếng ve kêu, có ánh nắng hạ, và có nụ cười của em. Chúc cho chúng ta của những năm tháng ấy và chúng ta của tương lai mãi mãi là câu trả lời duy nhất của nhau.🤍</div>
+
+  <div class="paw-row">🐶 💍 🐱</div>
+
+  <footer>made with 💗 for Cún &amp; Meo</footer>
+</div>
+
+<script>
+  // ---------- Mở phong thư ----------
+  const audio = document.getElementById('bgMusic');
+  audio.volume = 0.5;
+
+  const gate = document.getElementById('openGate');
+  const envelopeWrap = document.getElementById('envelopeWrap');
+  const mainWrap = document.querySelector('.wrap');
+  let opened = false;
+
+  function openGate() {
+    if (opened) return;
+    opened = true;
+
+    envelopeWrap.classList.add('opening');
+    audio.play().catch(() => {});
+    mainWrap.classList.add('reveal');
+
+    setTimeout(() => {
+      gate.classList.add('hide');
+    }, 950);
+
+    setTimeout(() => {
+      gate.remove();
+    }, 2000);
+  }
+
+  envelopeWrap.addEventListener('click', openGate);
+  envelopeWrap.addEventListener('touchend', (e) => { e.preventDefault(); openGate(); }, { passive:false });
+
+  // ---------- Realtime counter ----------
+  const START = new Date(2026, 2, 4, 0, 0, 0); // 04/03/2026
+
+  function pad(n){ return n.toString().padStart(2,'0'); }
+
+  function updateCounter(){
+    const now = new Date();
+    const diffMs = now - START;
+    if(diffMs < 0){
+      document.getElementById('dayCount').textContent = '0';
+      return;
+    }
+    const totalDays = Math.floor(diffMs / 86400000);
+    document.getElementById('dayCount').textContent = totalDays.toLocaleString('vi-VN');
+
+    let y = now.getFullYear() - START.getFullYear();
+    let m = now.getMonth() - START.getMonth();
+    let d = now.getDate() - START.getDate();
+    if(d < 0){
+      m -= 1;
+      const prevMonth = new Date(now.getFullYear(), now.getMonth(), 0);
+      d += prevMonth.getDate();
+    }
+    if(m < 0){ y -= 1; m += 12; }
+    document.getElementById('yrs').textContent = y;
+    document.getElementById('mos').textContent = m;
+    document.getElementById('dys').textContent = d;
+
+    const midnight = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const t = now - midnight;
+    const h = Math.floor(t/3600000), mi = Math.floor((t%3600000)/60000), s = Math.floor((t%60000)/1000);
+    document.getElementById('clock').textContent = pad(h)+':'+pad(mi)+':'+pad(s);
+  }
+  updateCounter();
+  setInterval(updateCounter, 1000);
+
+  // ---------- Floating hearts background ----------
+  const canvas = document.getElementById('hearts');
+  const ctx = canvas.getContext('2d');
+  let W,H,DPR;
+  function resize(){
+    DPR = Math.min(window.devicePixelRatio||1,2);
+    W = innerWidth; H = innerHeight;
+    canvas.width = W*DPR; canvas.height = H*DPR;
+    ctx.setTransform(DPR,0,0,DPR,0,0);
+  }
+  resize(); addEventListener('resize', resize);
+
+  const COLORS = ['#ff9ec7','#ffb8d9','#ff6fa5','#ffd6e8','#ffe3ee'];
+  function rand(a,b){ return a+Math.random()*(b-a); }
+
+  function drawHeart(x,y,size,color,alpha,rot){
+    ctx.save();
+    ctx.translate(x,y);
+    ctx.rotate(rot);
+    ctx.globalAlpha = alpha;
+    ctx.fillStyle = color;
+    ctx.beginPath();
+    const s = size/16;
+    ctx.moveTo(0, 4*s);
+    ctx.bezierCurveTo(0, 2*s, -3*s, -2*s, -8*s, -6*s);
+    ctx.bezierCurveTo(-16*s, -12*s, -6*s, -18*s, 0, -9*s);
+    ctx.bezierCurveTo(6*s, -18*s, 16*s, -12*s, 8*s, -6*s);
+    ctx.bezierCurveTo(3*s, -2*s, 0, 2*s, 0, 4*s);
+    ctx.fill();
+    ctx.restore();
+  }
+
+  class Heart{
+    constructor(){ this.reset(true); }
+    reset(initial){
+      this.x = rand(0,W);
+      this.y = initial ? rand(0,H) : H + rand(10,80);
+      this.size = rand(10,26);
+      this.speed = rand(0.25,0.9);
+      this.drift = rand(-0.4,0.4);
+      this.baseRot = rand(-0.15,0.15);
+      this.swayAmp = rand(0.08,0.22);
+      this.swaySpeed = rand(0.4,0.9);
+      this.color = COLORS[(Math.random()*COLORS.length)|0];
+      this.alpha = rand(0.35,0.85);
+      this.phase = rand(0,Math.PI*2);
+    }
+    update(t){
+      this.y -= this.speed;
+      this.x += Math.sin(this.phase + this.y*0.01)*this.drift;
+      this.rot = this.baseRot + Math.sin(t*this.swaySpeed + this.phase)*this.swayAmp;
+      if(this.y < -40) this.reset(false);
+    }
+    draw(){ drawHeart(this.x,this.y,this.size,this.color,this.alpha,this.rot); }
+  }
+
+  function drawPetal(x,y,size,color,alpha,rot){
+    ctx.save();
+    ctx.translate(x,y);
+    ctx.rotate(rot);
+    ctx.globalAlpha = alpha;
+    ctx.fillStyle = color;
+    ctx.beginPath();
+    ctx.moveTo(0,0);
+    ctx.quadraticCurveTo(size*0.55, -size*0.3, 0, -size);
+    ctx.quadraticCurveTo(-size*0.55, -size*0.3, 0, 0);
+    ctx.fill();
+    ctx.restore();
+  }
+  class Petal{
+    constructor(){ this.reset(true); }
+    reset(initial){
+      this.x = rand(0,W);
+      this.y = initial ? rand(-H,H) : -rand(10,60);
+      this.size = rand(9,18);
+      this.speed = rand(0.4,1.1);
+      this.drift = rand(0.3,0.9) * (Math.random()<0.5?-1:1);
+      this.rot = rand(0,Math.PI*2);
+      this.rotSpeed = rand(-0.03,0.03);
+      this.color = PETAL_COLORS[(Math.random()*PETAL_COLORS.length)|0];
+      this.alpha = rand(0.4,0.8);
+      this.phase = rand(0,Math.PI*2);
+    }
+    update(){
+      this.y += this.speed;
+      this.x += Math.sin(this.phase + this.y*0.02)*this.drift*0.4;
+      this.rot += this.rotSpeed;
+      if(this.y > H+40) this.reset(false);
+    }
+    draw(){ drawPetal(this.x,this.y,this.size,this.color,this.alpha,this.rot); }
+  }
+  const PETAL_COLORS = ['#ffffff','#ffe3ee','#ffc2dc','#ffb3d6'];
+
+  function drawSparkle(x,y,size,alpha){
+    ctx.save();
+    ctx.translate(x,y);
+    ctx.globalAlpha = alpha;
+    ctx.fillStyle = '#fff5fa';
+    ctx.beginPath();
+    ctx.moveTo(0,-size); ctx.lineTo(size*0.22,-size*0.22);
+    ctx.lineTo(size,0); ctx.lineTo(size*0.22,size*0.22);
+    ctx.lineTo(0,size); ctx.lineTo(-size*0.22,size*0.22);
+    ctx.lineTo(-size,0); ctx.lineTo(-size*0.22,-size*0.22);
+    ctx.closePath(); ctx.fill();
+    ctx.restore();
+  }
+  class Sparkle{
+    constructor(){
+      this.x = rand(0,W); this.y = rand(0,H);
+      this.size = rand(3,7);
+      this.phase = rand(0,Math.PI*2);
+      this.speed = rand(1.2,2.4);
+    }
+    draw(t){
+      const a = (Math.sin(t*this.speed + this.phase)+1)/2;
+      if(a>0.55) drawSparkle(this.x,this.y,this.size, (a-0.55)*1.9);
+    }
+  }
+
+  function drawFlower(x,y,size,alpha,rot){
+    ctx.save();
+    ctx.translate(x,y); ctx.rotate(rot);
+    ctx.globalAlpha = alpha;
+    for(let i=0;i<6;i++){
+      ctx.save();
+      ctx.rotate((Math.PI*2/6)*i);
+      ctx.fillStyle = '#ff9ec7';
+      ctx.beginPath();
+      ctx.ellipse(0,-size*0.55,size*0.34,size*0.55,0,0,Math.PI*2);
+      ctx.fill();
+      ctx.restore();
+    }
+    ctx.fillStyle = '#fff2c9';
+    ctx.beginPath(); ctx.arc(0,0,size*0.22,0,Math.PI*2); ctx.fill();
+    ctx.restore();
+  }
+  class Flower{
+    constructor(x,y,size){ this.x=x; this.y=y; this.size=size; this.phase=rand(0,Math.PI*2); }
+    draw(t){
+      const pulse = 1 + Math.sin(t*0.5+this.phase)*0.06;
+      drawFlower(this.x,this.y,this.size*pulse,0.16,Math.sin(t*0.15+this.phase)*0.25);
+    }
+  }
+
+  const N = W < 600 ? 22 : 40;
+  const hearts = Array.from({length:N}, ()=>new Heart());
+  const petals = Array.from({length: W<600?16:28}, ()=>new Petal());
+  const sparkles = Array.from({length: W<600?18:32}, ()=>new Sparkle());
+  const flowers = [
+    new Flower(W*0.08,H*0.12,90), new Flower(W*0.92,H*0.85,110),
+    new Flower(W*0.9,H*0.15,70), new Flower(W*0.1,H*0.88,80)
+  ];
+
+  // ---------- Vệt trái tim ma thuật bay theo chuột / ngón tay ----------
+  class TrailHeart{
+    constructor(x,y){
+      this.x = x; this.y = y;
+      this.size = rand(12,24);
+      this.color = COLORS[(Math.random()*COLORS.length)|0];
+      this.vx = rand(-0.7,0.7);
+      this.vy = rand(-1.8,-0.7);
+      this.rot = rand(-0.4,0.4);
+      this.rotSpeed = rand(-0.06,0.06);
+      this.life = 1;
+      this.decay = rand(0.014,0.024);
+      this.sparklePhase = rand(0,Math.PI*2);
+    }
+    update(){
+      this.x += this.vx;
+      this.y += this.vy;
+      this.vy *= 0.97;
+      this.vx *= 0.98;
+      this.rot += this.rotSpeed;
+      this.life -= this.decay;
+    }
+    draw(t){
+      if(this.life <= 0) return;
+      const popIn = Math.min((1-this.life)*6, 1);
+      const scale = popIn * Math.max(this.life,0);
+      drawHeart(this.x, this.y, this.size*scale, this.color, Math.max(this.life,0), this.rot);
+      const glint = (Math.sin(t*4 + this.sparklePhase)+1)/2;
+      if(glint > 0.55){
+        drawSparkle(this.x + this.size*0.32, this.y - this.size*0.32, this.size*0.2, (glint-0.55)*2.2*Math.max(this.life,0));
+      }
+    }
+  }
+
+  let trailHearts = [];
+  let lastTrailStamp = 0;
+  function spawnTrailHeart(x,y){
+    const now = performance.now();
+    if(now - lastTrailStamp < 40) return;
+    lastTrailStamp = now;
+    trailHearts.push(new TrailHeart(x + rand(-4,4), y + rand(-4,4)));
+    if(trailHearts.length > 140) trailHearts.splice(0, trailHearts.length-140);
+  }
+  window.addEventListener('pointermove', (e)=>{
+    spawnTrailHeart(e.clientX, e.clientY);
+  }, {passive:true});
+  window.addEventListener('touchmove', (e)=>{
+    for(const touch of e.touches){
+      spawnTrailHeart(touch.clientX, touch.clientY);
+    }
+  }, {passive:true});
+
+  function loop(ts){
+    const t = ts*0.001;
+    ctx.clearRect(0,0,W,H);
+
+    for(const f of flowers) f.draw(t);
+    for(const p of petals){ p.update(); p.draw(); }
+    for(const h of hearts){ h.update(t); h.draw(); }
+    for(const s of sparkles) s.draw(t);
+
+    trailHearts = trailHearts.filter(h => h.life > 0);
+    for(const th of trailHearts){ th.update(); th.draw(t); }
+
+    requestAnimationFrame(loop);
+  }
+  requestAnimationFrame(loop);
+</script>
+</body>
+</html>
